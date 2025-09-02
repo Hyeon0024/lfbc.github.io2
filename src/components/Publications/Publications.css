@@ -2,6 +2,93 @@
   background: white;
 }
 
+/* 연도별 논문 섹션 스타일 */
+.papers-by-year {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+.year-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.year-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.year-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin: 0;
+}
+
+.papers-count {
+  background: var(--color-accent);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* 더보기 버튼 스타일 */
+.more-papers-section {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+}
+
+.more-papers-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-surface);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-xl);
+  color: var(--color-accent);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.more-papers-btn:hover {
+  background: var(--color-accent);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.more-papers-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon {
+  font-size: 0.8rem;
+  transition: transform var(--transition-normal);
+}
+
+.more-papers-btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .more-papers-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+}
+
 .publications-header {
   margin-bottom: var(--spacing-2xl);
 }

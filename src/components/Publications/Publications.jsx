@@ -1,78 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { loadPapersData, loadPatentsData } from '../../utils/csvParser';
 import './Publications.css';
 
 const Publications = () => {
   const [activeTab, setActiveTab] = useState('papers');
   const [selectedYear, setSelectedYear] = useState('all');
+  const [publications, setPublications] = useState({
+    papers: [],
+    patents: []
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [expandedYears, setExpandedYears] = useState({}); // 연도별 더보기 상태
 
-  const publications = {
-    papers: [
-      {
-        id: 1,
-        title: "CRISPR-Cas9을 활용한 유전자 치료의 새로운 접근법",
-        authors: "김연구, 이실험, 박논문",
-        journal: "Nature Biotechnology",
-        year: 2024,
-        impact: "IF 54.908",
-        category: "유전공학"
-      },
-      {
-        id: 2,
-        title: "나노입자 기반 약물 전달 시스템의 생체 적합성 연구",
-        authors: "이나노, 김약물, 박전달",
-        journal: "Advanced Materials",
-        year: 2024,
-        impact: "IF 32.086",
-        category: "나노바이오"
-      },
-      {
-        id: 3,
-        title: "AI 기반 단백질 구조 예측 모델 개발",
-        authors: "박인공, 이지능, 김단백",
-        journal: "Science",
-        year: 2023,
-        impact: "IF 47.728",
-        category: "컴퓨터생물학"
-      },
-      {
-        id: 4,
-        title: "웨어러블 바이오센서를 통한 실시간 건강 모니터링",
-        authors: "최웨어, 김센서, 이헬스",
-        journal: "Nature Medicine",
-        year: 2023,
-        impact: "IF 82.955",
-        category: "바이오메디컬"
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [papersData, patentsData] = await Promise.all([
+          loadPapersData(),
+          loadPatentsData()
+        ]);
+        
+        console.log('📄 논문 데이터 로드됨:', papersData.length, '편');
+        console.log('💡 특허 데이터 로드됨:', patentsData.length, '건');
+        
+        setPublications({
+          papers: papersData,
+          patents: patentsData
+        });
+      } catch (err) {
+        console.error('Publications 데이터 로딩 실패:', err);
+        setError('연구 성과 데이터를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
       }
-    ],
-    patents: [
-      {
-        id: 1,
-        title: "휴대용 혈당 측정 장치 및 방법",
-        inventors: "김발명, 이특허",
-        number: "KR10-2024-0001234",
-        year: 2024,
-        status: "등록",
-        category: "의료기기"
-      },
-      {
-        id: 2,
-        title: "나노입자를 이용한 표적형 약물 전달 시스템",
-        inventors: "박나노, 최약물",
-        number: "US11,234,567",
-        year: 2024,
-        status: "등록",
-        category: "나노기술"
-      },
-      {
-        id: 3,
-        title: "AI 기반 의료 영상 분석 알고리즘",
-        inventors: "이인공, 김영상",
-        number: "KR10-2023-0005678",
-        year: 2023,
-        status: "등록",
-        category: "AI의료"
+    };
+
+    loadData();
+  }, []);
+
+  // 최근 3년간의 논문만 필터링 및 연도별 그룹화
+  const getRecentPapers = () => {
+    const currentYear = 2025;
+    const recentYears = [currentYear, currentYear - 1, currentYear - 2]; // [2025, 2024, 2023]
+    
+    const recentPapers = publications.papers.filter(paper => 
+      recentYears.includes(paper.year)
+    );
+    
+    // 연도별로 그룹화
+    const groupedByYear = {};
+    recentYears.forEach(year => {
+      const yearPapers = recentPapers.filter(paper => paper.year === year);
+      
+      if (yearPapers.length > 0) {
+        groupedByYear[year] = {
+          all: yearPapers, // 해당 연도의 전체 논문
+          preview: yearPapers.slice(0, 5), // 미리보기용 5편
+          hasMore: yearPapers.length > 5 // 더보기 버튼 표시 여부
+        };
       }
-    ]
+    });
+    
+    return groupedByYear;
+  };
+
+  // 더보기 버튼 클릭 핸들러
+  const toggleExpandYear = (year) => {
+    setExpandedYears(prev => ({
+      ...prev,
+      [year]: !prev[year]
+    }));
   };
 
   const years = ['all', ...new Set([...publications.papers, ...publications.patents].map(item => item.year))].sort((a, b) => {
@@ -84,6 +83,38 @@ const Publications = () => {
   const filteredData = publications[activeTab].filter(item => 
     selectedYear === 'all' || item.year === selectedYear
   );
+
+  const recentPapersGrouped = getRecentPapers();
+
+  if (loading) {
+    return (
+      <section id="publications" className="publications section">
+        <div className="container">
+          <div className="publications-header text-center">
+            <h2 className="text-headline mb-md">연구 성과</h2>
+            <p className="text-body-large mb-xl">
+              연구 데이터를 불러오는 중...
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="publications" className="publications section">
+        <div className="container">
+          <div className="publications-header text-center">
+            <h2 className="text-headline mb-md">연구 성과</h2>
+            <p className="text-body-large mb-xl error-message">
+              {error}
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="publications" className="publications section">
@@ -134,33 +165,107 @@ const Publications = () => {
 
         <div className="publications-content">
           {activeTab === 'papers' ? (
-            <div className="papers-grid">
-              {filteredData.map((paper, index) => (
-                <div
-                  key={paper.id}
-                  className="paper-card"
-                  style={{ '--delay': `${index * 0.1}s` }}
-                >
-                  <div className="paper-header">
-                    <div className="paper-category">{paper.category}</div>
-                    <div className="paper-year">{paper.year}</div>
-                  </div>
-                  
-                  <h3 className="paper-title">{paper.title}</h3>
-                  
-                  <div className="paper-authors">
-                    <strong>저자:</strong> {paper.authors}
-                  </div>
-                  
-                  <div className="paper-journal">
-                    <strong>게재지:</strong> {paper.journal}
-                  </div>
-                  
-                  <div className="paper-impact">
-                    <span className="impact-badge">{paper.impact}</span>
-                  </div>
+            <div className="papers-section">
+              {selectedYear === 'all' ? (
+                // 최근 3년 연도별 구분 표시
+                <div className="papers-by-year">
+                  {Object.entries(recentPapersGrouped)
+                    .sort(([yearA], [yearB]) => parseInt(yearB) - parseInt(yearA))
+                    .map(([year, yearData]) => {
+                      const isExpanded = expandedYears[year];
+                      const papersToShow = isExpanded ? yearData.all : yearData.preview;
+                      
+                      return (
+                      <div key={year} className="year-section">
+                        <div className="year-header">
+                          <h3 className="year-title">{year}년 논문</h3>
+                          <span className="papers-count">{yearData.all.length}편</span>
+                        </div>
+                        <div className="papers-grid">
+                          {papersToShow.map((paper, index) => (
+                            <div
+                              key={paper.id}
+                              className="paper-card"
+                              style={{ '--delay': `${index * 0.1}s` }}
+                            >
+                              <div className="paper-header">
+                                <div className="paper-category">{paper.category}</div>
+                                <div className="paper-year">{paper.year}</div>
+                              </div>
+                              
+                              <h3 className="paper-title">{paper.title}</h3>
+                              
+                              <div className="paper-authors">
+                                <strong>저자:</strong> {Array.isArray(paper.authors) ? paper.authors.join(', ') : paper.authors}
+                              </div>
+                              
+                              <div className="paper-journal">
+                                <strong>게재지:</strong> {paper.journal}
+                              </div>
+                              
+                              <div className="paper-impact">
+                                <span className="impact-badge">{paper.impact}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {yearData.hasMore && (
+                          <div className="more-papers-section">
+                            <button 
+                              className="more-papers-btn"
+                              onClick={() => toggleExpandYear(year)}
+                            >
+                              {isExpanded ? (
+                                <>
+                                  <span>접기</span>
+                                  <span className="btn-icon">▲</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span>더보기 ({yearData.all.length - yearData.preview.length}편 더)</span>
+                                  <span className="btn-icon">▼</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      );
+                    })
+                  }
                 </div>
-              ))}
+              ) : (
+                // 특정 연도 선택시 기존 방식
+                <div className="papers-grid">
+                  {filteredData.map((paper, index) => (
+                    <div
+                      key={paper.id}
+                      className="paper-card"
+                      style={{ '--delay': `${index * 0.1}s` }}
+                    >
+                      <div className="paper-header">
+                        <div className="paper-category">{paper.category}</div>
+                        <div className="paper-year">{paper.year}</div>
+                      </div>
+                      
+                      <h3 className="paper-title">{paper.title}</h3>
+                      
+                      <div className="paper-authors">
+                        <strong>저자:</strong> {Array.isArray(paper.authors) ? paper.authors.join(', ') : paper.authors}
+                      </div>
+                      
+                      <div className="paper-journal">
+                        <strong>게재지:</strong> {paper.journal}
+                      </div>
+                      
+                      <div className="paper-impact">
+                        <span className="impact-badge">{paper.impact}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <div className="patents-grid">
@@ -180,7 +285,7 @@ const Publications = () => {
                   <h3 className="patent-title">{patent.title}</h3>
                   
                   <div className="patent-inventors">
-                    <strong>발명자:</strong> {patent.inventors}
+                    <strong>발명자:</strong> {Array.isArray(patent.inventors) ? patent.inventors.join(', ') : patent.inventors}
                   </div>
                   
                   <div className="patent-number">

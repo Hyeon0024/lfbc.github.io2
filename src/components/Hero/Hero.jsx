@@ -24,7 +24,7 @@ const Hero = () => {
       <div className="container">
         <div className={`hero-content ${isVisible ? 'visible' : ''}`}>
           <h1 className="hero-title text-display">
-            생명과학의
+            생명과학의 아싸 아싸 아싸
             <br />
             <span className="gradient-text">새로운 지평</span>
           </h1>

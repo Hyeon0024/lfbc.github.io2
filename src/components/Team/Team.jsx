@@ -13,6 +13,11 @@ const Team = () => {
       try {
         setLoading(true);
         const data = await loadTeamData();
+        console.log('🔥 Team 컴포넌트에서 받은 데이터:', data);
+        console.log('🔥 팀원 수:', data.length);
+        data.forEach((member, i) => {
+          console.log(`🔥 팀원 ${i+1}:`, member.name, '|', member.position);
+        });
         setTeamMembers(data);
       } catch (err) {
         console.error('팀 데이터 로딩 실패:', err);

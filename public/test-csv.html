@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV 테스트</title>
+</head>
+<body>
+    <h1>CSV 파일 테스트</h1>
+    <div id="result"></div>
+    
+    <script>
+        async function testCSV() {
+            try {
+                console.log('CSV 파일 로딩 시작...');
+                const response = await fetch('/data/team-members.csv');
+                console.log('응답 상태:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const text = await response.text();
+                console.log('CSV 원본 데이터:');
+                console.log(text);
+                console.log('---');
+                
+                const lines = text.trim().split('\n');
+                console.log('총 라인 수:', lines.length);
+                
+                lines.forEach((line, i) => {
+                    console.log(`라인 ${i}:`, line);
+                });
+                
+                document.getElementById('result').innerHTML = 
+                    `<pre>${text}</pre><p>총 ${lines.length}줄 (헤더 포함)</p><p>팀원 수: ${lines.length - 1}명</p>`;
+                
+            } catch (error) {
+                console.error('오류:', error);
+                document.getElementById('result').innerHTML = 
+                    `<p style="color: red;">오류: ${error.message}</p>`;
+            }
+        }
+        
+        testCSV();
+    </script>
+</body>
+</html>

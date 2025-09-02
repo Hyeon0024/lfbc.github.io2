@@ -89,22 +89,71 @@ export const loadTeamData = async () => {
     return data;
   } catch (error) {
     console.error('팀 데이터 로딩 오류:', error);
+    console.error('Error details:', error.message);
     
-    // CSV 로딩 실패시 최소한의 기본 데이터만 반환
-    console.warn('CSV 파일 로딩 실패, 기본 데이터 사용');
-    return [
-      {
-        id: 1,
-        name: "팀원 정보 로딩 중...",
-        position: "CSV 파일을 확인하세요",
-        education: "",
-        specialization: "",
-        research: "",
-        email: "",
-        phone: "",
-        website: "",
-        photo: "/images/team/placeholder.svg"
-      }
-    ];
+    // CSV 로딩 실패시 빈 배열 반환하여 문제를 명확히 드러냄
+    throw error; // 에러를 다시 던져서 컴포넌트에서 처리하도록 함
+  }
+};
+
+/**
+ * 논문 CSV 데이터를 로드하는 함수
+ */
+export const loadPapersData = async () => {
+  try {
+    const response = await fetch('/data/papers.csv');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const csvText = await response.text();
+    const data = parseCSV(csvText);
+    
+    // 데이터 유효성 검사
+    if (!data || data.length === 0) {
+      throw new Error('논문 CSV 파일이 비어있습니다.');
+    }
+    
+    // authors 필드를 배열로 변환 (세미콜론으로 구분)
+    return data.map((paper, index) => ({
+      id: index + 1,
+      ...paper,
+      authors: paper.authors ? paper.authors.split(';') : [],
+      year: parseInt(paper.year) || 2024
+    }));
+    
+  } catch (error) {
+    console.error('논문 데이터 로딩 오류:', error);
+    throw error;
+  }
+};
+
+/**
+ * 특허 CSV 데이터를 로드하는 함수  
+ */
+export const loadPatentsData = async () => {
+  try {
+    const response = await fetch('/data/patents.csv');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const csvText = await response.text();
+    const data = parseCSV(csvText);
+    
+    // 데이터 유효성 검사
+    if (!data || data.length === 0) {
+      throw new Error('특허 CSV 파일이 비어있습니다.');
+    }
+    
+    // inventors 필드를 배열로 변환 (세미콜론으로 구분)
+    return data.map((patent, index) => ({
+      id: index + 1,
+      ...patent,
+      inventors: patent.inventors ? patent.inventors.split(';') : [],
+      year: parseInt(patent.year) || 2024
+    }));
+    
+  } catch (error) {
+    console.error('특허 데이터 로딩 오류:', error);
+    throw error;
   }
 };
