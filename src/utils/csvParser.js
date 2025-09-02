@@ -1,12 +1,20 @@
 /**
  * CSV 파일을 파싱하여 팀원 데이터를 반환하는 유틸리티 함수
+ * 쌍따옴표로 감싸진 필드와 콤마가 포함된 값들을 올바르게 처리합니다.
  */
 export const parseCSV = (csvText) => {
   const lines = csvText.trim().split('\n');
-  const headers = lines[0].split(',').map(header => header.trim());
+  if (lines.length === 0) return [];
   
-  return lines.slice(1).map((line, index) => {
-    const values = line.split(',').map(value => value.trim());
+  // 헤더 파싱
+  const headers = parseCSVLine(lines[0]);
+  console.log('CSV 헤더:', headers);
+  
+  // 데이터 라인 파싱
+  const data = lines.slice(1).map((line, index) => {
+    if (!line.trim()) return null; // 빈 줄 건너뛰기
+    
+    const values = parseCSVLine(line);
     const member = {};
     
     headers.forEach((header, i) => {
@@ -17,8 +25,49 @@ export const parseCSV = (csvText) => {
       id: index + 1,
       ...member
     };
-  });
+  }).filter(Boolean); // null 값 제거
+  
+  console.log(`CSV에서 파싱된 팀원 수: ${data.length}`);
+  console.log('파싱된 데이터:', data);
+  
+  return data;
 };
+
+/**
+ * CSV 라인을 파싱하는 헬퍼 함수
+ */
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    const nextChar = line[i + 1];
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        // 이스케이프된 따옴표
+        current += '"';
+        i++; // 다음 따옴표 건너뛰기
+      } else {
+        // 따옴표 토글
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      // 필드 구분자
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  // 마지막 필드 추가
+  result.push(current.trim());
+  
+  return result;
+}
 
 /**
  * 팀원 CSV 데이터를 로드하는 함수
@@ -41,43 +90,20 @@ export const loadTeamData = async () => {
   } catch (error) {
     console.error('팀 데이터 로딩 오류:', error);
     
-    // 기본 데이터 반환 (개발/테스트용)
+    // CSV 로딩 실패시 최소한의 기본 데이터만 반환
+    console.warn('CSV 파일 로딩 실패, 기본 데이터 사용');
     return [
       {
         id: 1,
-        name: "김지훈",
-        position: "연구실 책임자", 
-        education: "Ph.D. in Biomedical Engineering (MIT)",
-        specialization: "바이오메디컬 엔지니어링",
-        research: "의료기기 개발 및 생체재료",
-        email: "professor.kim@lab.ac.kr",
-        phone: "02-123-4567",
-        website: "https://www.researchgate.net/profile/김지훈",
-        photo: "/images/team/kim-jihoon.jpg"
-      },
-      {
-        id: 2,
-        name: "이서영",
-        position: "선임연구원",
-        education: "Ph.D. in Molecular Biology (서울대학교)",
-        specialization: "분자생물학",
-        research: "유전자 치료 및 줄기세포 연구",
-        email: "dr.lee@lab.ac.kr",
-        phone: "02-123-4568",
+        name: "팀원 정보 로딩 중...",
+        position: "CSV 파일을 확인하세요",
+        education: "",
+        specialization: "",
+        research: "",
+        email: "",
+        phone: "",
         website: "",
-        photo: "/images/team/lee-seoyoung.jpg"
-      },
-      {
-        id: 3,
-        name: "박민수",
-        position: "연구원",
-        education: "M.S. in Nanotechnology (KAIST)",
-        specialization: "나노바이오 기술",
-        research: "약물 전달 시스템 개발", 
-        email: "researcher.park@lab.ac.kr",
-        phone: "02-123-4569",
-        website: "",
-        photo: "/images/team/park-minsu.jpg"
+        photo: "/images/team/placeholder.svg"
       }
     ];
   }
