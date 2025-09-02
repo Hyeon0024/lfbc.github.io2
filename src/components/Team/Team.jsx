@@ -1,45 +1,59 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import TeamMember from './TeamMember';
+import { loadTeamData } from '../../utils/csvParser';
 import './Team.css';
 
 const Team = () => {
-  const teamMembers = [
-    {
-      id: 1,
-      name: "김교수",
-      position: "연구실 책임자",
-      education: "Ph.D. in Biomedical Engineering",
-      specialization: "바이오메디컬 엔지니어링, 의료기기 개발",
-      email: "professor.kim@lab.ac.kr",
-      avatar: "👨‍🔬"
-    },
-    {
-      id: 2,
-      name: "이박사",
-      position: "선임연구원",
-      education: "Ph.D. in Molecular Biology",
-      specialization: "분자생물학, 유전자 치료",
-      email: "dr.lee@lab.ac.kr",
-      avatar: "👩‍🔬"
-    },
-    {
-      id: 3,
-      name: "박연구원",
-      position: "연구원",
-      education: "M.S. in Nanotechnology",
-      specialization: "나노바이오 기술, 약물 전달",
-      email: "researcher.park@lab.ac.kr",
-      avatar: "👨‍💻"
-    },
-    {
-      id: 4,
-      name: "최학생",
-      position: "박사과정",
-      education: "Ph.D. Candidate in Computer Science",
-      specialization: "바이오인포매틱스, 머신러닝",
-      email: "phd.choi@lab.ac.kr",
-      avatar: "👩‍💻"
-    }
-  ];
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      try {
+        setLoading(true);
+        const data = await loadTeamData();
+        setTeamMembers(data);
+      } catch (err) {
+        console.error('팀 데이터 로딩 실패:', err);
+        setError('팀 데이터를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeamData();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="team" className="team section">
+        <div className="container">
+          <div className="team-header text-center">
+            <h2 className="text-headline mb-md">연구팀</h2>
+            <p className="text-body-large mb-xl">
+              팀 데이터를 불러오는 중...
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="team" className="team section">
+        <div className="container">
+          <div className="team-header text-center">
+            <h2 className="text-headline mb-md">연구팀</h2>
+            <p className="text-body-large mb-xl error-message">
+              {error}
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="team" className="team section">
@@ -55,29 +69,11 @@ const Team = () => {
 
         <div className="team-grid">
           {teamMembers.map((member, index) => (
-            <div
-              key={member.id}
-              className="team-member"
-              style={{ '--delay': `${index * 0.1}s` }}
-            >
-              <div className="member-avatar">
-                <span>{member.avatar}</span>
-              </div>
-              
-              <div className="member-info">
-                <h3 className="member-name">{member.name}</h3>
-                <div className="member-position">{member.position}</div>
-                <div className="member-education">{member.education}</div>
-                <div className="member-specialization">
-                  <strong>전문 분야:</strong> {member.specialization}
-                </div>
-                <div className="member-contact">
-                  <a href={`mailto:${member.email}`} className="email-link">
-                    {member.email}
-                  </a>
-                </div>
-              </div>
-            </div>
+            <TeamMember 
+              key={member.id} 
+              member={member} 
+              index={index} 
+            />
           ))}
         </div>
 

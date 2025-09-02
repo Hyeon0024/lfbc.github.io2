@@ -2,6 +2,11 @@
   background: var(--color-surface);
 }
 
+.error-message {
+  color: #dc3545;
+  font-weight: 500;
+}
+
 .team-header {
   margin-bottom: var(--spacing-2xl);
 }
