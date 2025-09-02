@@ -19,6 +19,7 @@ const TeamMember = ({ member, index }) => {
             src={member.photo}
             alt={`${member.name} 프로필 사진`}
             onError={handleImageError}
+            onLoad={() => console.log(`이미지 로드 성공: ${member.photo}`)}
             className="avatar-image"
           />
         ) : (
