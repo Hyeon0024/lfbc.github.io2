@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './TeamMember.css';
 
-const TeamMember = ({ member, index }) => {
+const TeamMember = ({ member, index, isAlumni = false }) => {
   const [imageError, setImageError] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleImageError = () => {
     setImageError(true);
@@ -10,7 +11,7 @@ const TeamMember = ({ member, index }) => {
 
   return (
     <div
-      className="team-member"
+      className={`team-member ${isAlumni ? 'alumni-member' : ''}`}
       style={{ '--delay': `${index * 0.1}s` }}
     >
       <div className="member-avatar">
@@ -20,6 +21,7 @@ const TeamMember = ({ member, index }) => {
             alt={`${member.name} 프로필 사진`}
             onError={handleImageError}
             onLoad={() => console.log(`이미지 로드 성공: ${member.photo}`)}
+            onClick={() => setShowModal(true)}
             className="avatar-image"
           />
         ) : (
@@ -39,22 +41,22 @@ const TeamMember = ({ member, index }) => {
         )}
         {member.specialization && (
           <div className="member-specialization">
-            <strong>전문 분야:</strong> {member.specialization}
+            <strong>Specialization:</strong> {member.specialization}
           </div>
         )}
         {member.research && (
           <div className="member-research">
-            <strong>연구 분야:</strong> {member.research}
+            <strong>Research:</strong> {member.research}
           </div>
         )}
         {member.phone && (
           <div className="member-phone">
-            <strong>전화:</strong> {member.phone}
+            <strong>Tel:</strong> {member.phone}
           </div>
         )}
         {member.email && (
           <div className="member-contact">
-            <a href={`mailto:${member.email}`} className="email-link">
+            <strong>E-mail:</strong> <a href={`mailto:${member.email}`} className="email-link">
               {member.email}
             </a>
           </div>
@@ -72,6 +74,21 @@ const TeamMember = ({ member, index }) => {
           </div>
         )}
       </div>
+      
+      {showModal && (
+        <div className="photo-modal" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={member.photo}
+              alt={`${member.name} 프로필 사진 원본`}
+              className="modal-image"
+            />
+            <button className="close-button" onClick={() => setShowModal(false)}>
+              <span className="close-x"></span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

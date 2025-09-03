@@ -60,6 +60,9 @@ const Team = () => {
     );
   }
 
+  const currentMembers = teamMembers.filter(member => member.status === 'current');
+  const alumniMembers = teamMembers.filter(member => member.status === 'alumni');
+
   return (
     <section id="team" className="team section">
       <div className="container">
@@ -72,15 +75,37 @@ const Team = () => {
           </p>
         </div>
 
-        <div className="team-grid">
-          {teamMembers.map((member, index) => (
-            <TeamMember 
-              key={member.id} 
-              member={member} 
-              index={index} 
-            />
-          ))}
+        {/* 현재 멤버 */}
+        <div className="team-section">
+          <h3 className="section-title">현재 멤버</h3>
+          <div className="team-grid">
+            {currentMembers.map((member, index) => (
+              <TeamMember 
+                key={member.id} 
+                member={member} 
+                index={index}
+                isAlumni={false}
+              />
+            ))}
+          </div>
         </div>
+
+        {/* 졸업 멤버 */}
+        {alumniMembers.length > 0 && (
+          <div className="team-section alumni-section">
+            <h3 className="section-title">졸업 멤버</h3>
+            <div className="team-grid alumni-grid">
+              {alumniMembers.map((member, index) => (
+                <TeamMember 
+                  key={member.id} 
+                  member={member} 
+                  index={index}
+                  isAlumni={true}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="team-cta text-center">
           <h3 className="text-title mb-md">함께 연구하고 싶으시나요?</h3>
