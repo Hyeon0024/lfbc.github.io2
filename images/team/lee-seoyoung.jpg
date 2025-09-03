@@ -1,0 +1,32 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="100" fill="url(#profileGradient)"/>
+  
+  <!-- Face -->
+  <circle cx="100" cy="80" r="30" fill="#FDB5A6" opacity="0.9"/>
+  
+  <!-- Eyes -->
+  <circle cx="90" cy="75" r="3" fill="#2D3748"/>
+  <circle cx="110" cy="75" r="3" fill="#2D3748"/>
+  
+  <!-- Nose -->
+  <ellipse cx="100" cy="85" rx="2" ry="3" fill="#E2A090" opacity="0.7"/>
+  
+  <!-- Mouth -->
+  <path d="M95 90 Q100 95 105 90" stroke="#2D3748" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Hair -->
+  <path d="M70 65 Q100 40 130 65 Q125 50 100 50 Q75 50 70 65" fill="#4A5568"/>
+  
+  <!-- Body/Shirt -->
+  <path d="M60 140 Q60 120 80 115 Q90 110 100 110 Q110 110 120 115 Q140 120 140 140 L140 200 L60 200 Z" fill="#4299E1"/>
+  
+  <!-- Collar -->
+  <path d="M95 110 L100 120 L105 110" fill="#2B6CB0"/>
+  
+  <defs>
+    <linearGradient id="profileGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+</svg>
