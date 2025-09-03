@@ -40,10 +40,10 @@ const Publications = () => {
     loadData();
   }, []);
 
-  // 최근 3년간의 논문만 필터링 및 연도별 그룹화
+  // 올해 논문만 필터링 및 연도별 그룹화
   const getRecentPapers = () => {
     const currentYear = 2025;
-    const recentYears = [currentYear, currentYear - 1, currentYear - 2]; // [2025, 2024, 2023]
+    const recentYears = [currentYear]; // [2025]
     
     const recentPapers = publications.papers.filter(paper => 
       recentYears.includes(paper.year)
@@ -167,7 +167,7 @@ const Publications = () => {
           {activeTab === 'papers' ? (
             <div className="papers-section">
               {selectedYear === 'all' ? (
-                // 최근 3년 연도별 구분 표시
+                // 올해 연도별 구분 표시
                 <div className="papers-by-year">
                   {Object.entries(recentPapersGrouped)
                     .sort(([yearA], [yearB]) => parseInt(yearB) - parseInt(yearA))
