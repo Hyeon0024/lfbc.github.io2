@@ -87,7 +87,11 @@ export const loadTeamData = async () => {
       throw new Error('CSV 파일이 비어있습니다.');
     }
     
-    return data;
+    // 프로덕션 환경에서 이미지 경로에 base path 추가
+    return data.map(member => ({
+      ...member,
+      photo: member.photo ? `${basePath}${member.photo}` : member.photo
+    }));
   } catch (error) {
     console.error('팀 데이터 로딩 오류:', error);
     console.error('Error details:', error.message);
