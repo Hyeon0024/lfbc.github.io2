@@ -80,9 +80,11 @@ const Publications = () => {
     return b - a;
   });
 
-  const filteredData = publications[activeTab].filter(item => 
-    selectedYear === 'all' || item.year === selectedYear
-  );
+  const filteredData = publications[activeTab].filter(item => {
+    const currentYear = 2025;
+    // 논문과 특허 모두 올해(2025) 것만 표시
+    return selectedYear === 'all' ? item.year === currentYear : item.year === selectedYear;
+  });
 
   const recentPapersGrouped = getRecentPapers();
 
