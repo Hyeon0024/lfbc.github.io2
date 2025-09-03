@@ -74,7 +74,8 @@ function parseCSVLine(line) {
  */
 export const loadTeamData = async () => {
   try {
-    const response = await fetch('./data/team-members.csv');
+    const basePath = import.meta.env.PROD ? '/lfbc.github.io2' : '';
+    const response = await fetch(`${basePath}/data/team-members.csv`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -101,7 +102,8 @@ export const loadTeamData = async () => {
  */
 export const loadPapersData = async () => {
   try {
-    const response = await fetch('./data/papers.csv');
+    const basePath = import.meta.env.PROD ? '/lfbc.github.io2' : '';
+    const response = await fetch(`${basePath}/data/papers.csv`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -132,7 +134,8 @@ export const loadPapersData = async () => {
  */
 export const loadPatentsData = async () => {
   try {
-    const response = await fetch('./data/patents.csv');
+    const basePath = import.meta.env.PROD ? '/lfbc.github.io2' : '';
+    const response = await fetch(`${basePath}/data/patents.csv`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
