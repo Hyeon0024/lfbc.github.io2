@@ -74,7 +74,7 @@ function parseCSVLine(line) {
  */
 export const loadTeamData = async () => {
   try {
-    const response = await fetch('/data/team-members.csv');
+    const response = await fetch('./data/team-members.csv');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -101,7 +101,7 @@ export const loadTeamData = async () => {
  */
 export const loadPapersData = async () => {
   try {
-    const response = await fetch('/data/papers.csv');
+    const response = await fetch('./data/papers.csv');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -132,7 +132,7 @@ export const loadPapersData = async () => {
  */
 export const loadPatentsData = async () => {
   try {
-    const response = await fetch('/data/patents.csv');
+    const response = await fetch('./data/patents.csv');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
