@@ -6,7 +6,8 @@
       "Bash(rm:*)",
       "Bash(NODE_ENV=production npm run build)",
       "Bash(cp:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

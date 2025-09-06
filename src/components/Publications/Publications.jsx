@@ -42,8 +42,8 @@ const Publications = () => {
 
   // 올해 논문만 필터링 및 연도별 그룹화
   const getRecentPapers = () => {
-    const currentYear = 2025;
-    const recentYears = [currentYear]; // [2025]
+    const currentYear = 2025; // GitHub Pages 배포시: 이 연도의 논문만 표시됨
+    const recentYears = [currentYear]; // [2025] - 다른 연도 추가하려면 배열에 추가
     
     const recentPapers = publications.papers.filter(paper => 
       recentYears.includes(paper.year)
@@ -81,8 +81,9 @@ const Publications = () => {
   });
 
   const filteredData = publications[activeTab].filter(item => {
-    const currentYear = 2025;
+    const currentYear = 2025; // GitHub Pages 배포시: 필터링할 기준 연도
     // 논문과 특허 모두 올해(2025) 것만 표시
+    // selectedYear가 'all'이면 currentYear만, 특정 연도 선택시 해당 연도만
     return selectedYear === 'all' ? item.year === currentYear : item.year === selectedYear;
   });
 

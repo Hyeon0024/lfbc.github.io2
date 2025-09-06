@@ -4,6 +4,7 @@ import Hero from './components/Hero/Hero';
 import Research from './components/Research/Research';
 import Publications from './components/Publications/Publications';
 import Team from './components/Team/Team';
+import TeamGallery from './components/TeamGallery/TeamGallery';
 import Contact from './components/Contact/Contact';
 import Footer from './components/Footer/Footer';
 import './App.css';
@@ -16,6 +17,7 @@ function App() {
       <Research />
       <Publications />
       <Team />
+      <TeamGallery />
       <Contact />
       <Footer />
     </div>
