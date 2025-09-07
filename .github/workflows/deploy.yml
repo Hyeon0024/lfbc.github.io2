@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pages: write
       id-token: write
     environment:
@@ -28,8 +28,29 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Build
+      - name: Build for production
         run: NODE_ENV=production npm run build
+        
+      - name: Copy build files to root (GitHub Pages compatibility)
+        run: |
+          cp -r dist/* .
+          rm -rf dist
+          
+      - name: Commit and push built files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🚀 Deploy to GitHub Pages
+
+            🤖 Generated with [Claude Code](https://claude.ai/code)
+
+            Co-Authored-By: Claude <noreply@anthropic.com>"
+            git push
+          fi
         
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -37,7 +58,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./
           
       - name: Deploy to GitHub Pages
         id: deployment

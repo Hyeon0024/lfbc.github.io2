@@ -24,14 +24,33 @@ base: process.env.NODE_ENV === 'production' ? '/lfbc.github.io2/' : '/',
 <link rel="stylesheet" crossorigin href="/lfbc.github.io2/assets/index-[hash].css">
 ```
 
-## 배포 명령어 순서
+## 배포 방법
 
-### 1. 로컬 테스트
+### 🤖 자동 배포 (권장)
+GitHub Actions를 통한 자동 배포가 설정되어 있습니다.
+
+```bash
+# 코드 변경 후 main 브랜치에 푸시하면 자동 배포됩니다
+git add .
+git commit -m "Your commit message"
+git push origin main
+```
+
+**자동 배포 과정:**
+1. `main` 브랜치에 코드 푸시
+2. GitHub Actions가 자동으로 실행
+3. `NODE_ENV=production npm run build` 실행
+4. 빌드 파일을 루트로 복사 (`cp -r dist/* . && rm -rf dist`)
+5. GitHub Pages에 자동 배포
+
+### 🔧 로컬 테스트
 ```bash
 npm run dev  # http://localhost:5173에서 테스트
 ```
 
-### 2. GitHub Pages 배포
+### 📋 수동 배포 (필요시에만)
+자동 배포에 문제가 있을 때만 사용하세요:
+
 ```bash
 # 1. 프로덕션 빌드 (NODE_ENV=production 필수!)
 NODE_ENV=production npm run build
